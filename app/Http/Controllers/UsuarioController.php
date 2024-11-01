@@ -2,55 +2,49 @@
 namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\UsuarioModel;
+use App\Models\Usuario;
 
 class UsuarioController extends Controller
 {
-    /*
     public function index()
-    {
-        //o método all pega todo o conteúdo da tabela usuarios
-        $usuarioss = UsuarioModel::all();
-        $nome="aaaaaaaaaaaaaa";
-        dd( $nome);
-        //dd($usuarioss);
-        //dd($usuarioss);         vetorUsuarios
-        return view('usuarios',['xxx'=>$usuarioss]);
-       // return view('usuarios.index',['nomea'=>$nome]);
-        //return view('usuarios.index');
-    }
-*/
-    public function index()
-    {
-        dd('Olá mundo');
-        $nome="aaaaaaaaaaaaaa";
-        dd( $nome);
-        return view('usuarios',['nomea'=>$nome]);
+    {             //usuario é a classe model
+        $usuarios = Usuario::all();
+        //dd($usuarios);
+        return view('usuarios.index',['vetorUsuarios'=>$usuarios]);
     }
     public function create()
     {
-        return view('usuarios');
+        return view('usuarios.create');
     }
-
-    public function cadastrar(Request $request)
+    public function store(Request $request)
     {
-        $usuario = new UsuarioModel();
-        //objeto da classe Model é preenchido pelos dados do formulário da View
-        $usuario->name = $request->name;
-        $usuario->email = $request->email;
-        $usuario->password = $request->password;
-        $usuario->save();
-        return redirect('usuarios');
+        //dd($request);
+        Usuario::create($request->all());
+        return redirect()->route('usuarios-index');
     }
-
-    public function verUsuarios(){
-        $usuarios = UsuarioModel::all();
-        return view('usuarios',['vetorUsuarios'=>$usuarios]);
+    public function edit($id)
+    {
+        $usuario = Usuario::where('id',$id)->first();
+        if (!empty($usuario))
+            //dd($usuario);
+            return view('usuarios.edit',['usuario'=>$usuario]);
+        else
+            return redirect('/usuarios');
     }
-
+    public function update(Request $request, $id)
+    {
+        //dd($id);
+        $data=[
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $request->password  ];
+        Usuario::where('id',$id)->update($data);
+        return redirect('/usuarios');
+    }
+    public function destroy($id)
+    {
+        //dd($id);
+        Usuario::where('id',$id)->delete();
+        return redirect('/usuarios');
+    }
 }
- /* 
- protected $fillable = [
-        'nome',
-        'email',
-        'password'];        */
